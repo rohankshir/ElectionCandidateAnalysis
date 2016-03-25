@@ -1,4 +1,5 @@
 Source: http://www.dailykos.com/story/2016/2/27/1492599/-Hillary-Clinton-s-South-Carolina-speech-Transcript
+Label:Hillary
 Thank you so much South Carolina! Thank you so much, from one end of this state to another, I am so greatly appreciative, because today you sent a message: in America, when we stand together, there is no barrier too big to break.
 
 We’ve now gone through four early states, and I want to congratulate Senator Sanders on running a great race. And tomorrow, this campaign goes national.
