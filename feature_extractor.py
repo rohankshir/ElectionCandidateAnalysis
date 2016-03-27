@@ -9,6 +9,7 @@ from nltk.corpus import stopwords
 import sys
 from pprint import pprint
 from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.linear_model import SGDClassifier
 from sklearn.grid_search import GridSearchCV
@@ -18,15 +19,20 @@ import sklearn.linear_model as linear_model
 from time import time
 import numpy as np
 
+def clean_token(token):
+    if "--" in token:
+        return "-"
+    return token
+
 class LemmaTokenizer(object):
     def __init__(self):
         self.wnl = WordNetLemmatizer()
         
     def __call__(self, doc):
         ret = []
-        for  t in nltk.word_tokenize(doc):
+        for  t in doc.split():
             try:
-                ret.append(self.wnl.lemmatize(t.decode()))
+                ret.append(self.wnl.lemmatize(clean_token(t)))
             except NameError as e:
                 pprint(e)
                 ret.append(t)
@@ -74,90 +80,90 @@ def remove_annotations(sentence):
 def preprocess_sentence(sentence):
     ret = remove_bracket(sentence)
     ret = remove_annotations(ret)
-    return ret.lower()
+    return ret
+
+def main():
+
+    reload(sys)
+    sys.setdefaultencoding('utf-8')
+
+    pprint(LemmaTokenizer()("this is testing the stemming functionality"))
 
 
-reload(sys)
-sys.setdefaultencoding('utf-8')
+    param_grid = [
+        {'C': [.125, .25, .5, 1, 10, 100, 1000]},
+        { 'penalty': ('l1','l2')}
+    ]
 
-pprint(LemmaTokenizer()("this is testing the stemming functionality"))
+    svm_param_grid = [
+        {'C': [1, 10, 100, 1000], 'kernel': ['linear']},
+        {'C': [1, 10, 100, 1000], 'gamma': [0.001, 0.0001], 'kernel': ['rbf']},
+    ]
 
+    lines = [line for line in fileinput.input()]
 
-param_grid = [
-  {'C': [.125, .25, .5, 1, 10, 100, 1000]},
-  { 'penalty': ('l1','l2')}
- ]
+    sentences = map(lambda x: x.split('\t')[1], lines)
+    Y =  map(lambda x: int(x.split('\t')[0]), lines)
 
-svm_param_grid = [
-  {'C': [1, 10, 100, 1000], 'kernel': ['linear']},
-  {'C': [1, 10, 100, 1000], 'gamma': [0.001, 0.0001], 'kernel': ['rbf']},
- ]
+    vectorizer = TfidfVectorizer(min_df=1,
+                                 tokenizer=LemmaTokenizer(),
+                                 preprocessor=preprocess_sentence,
+                                 ngram_range=(1,2),
+                                 stop_words='english')
 
-lines = [line for line in fileinput.input()]
+    pipeline = Pipeline([
+        ('vect', vectorizer),
+        ('clf', SGDClassifier()),
+    ])
 
-sentences = map(lambda x: x.split('\t')[1], lines)
-Y =  map(lambda x: int(x.split('\t')[0]), lines)
+    # pprint(parameters)
+    # t0 = time()
+    # grid_search.fit(sentences, Y)
+    # print("done in %0.3fs" % (time() - t0))
+    # print()
 
-vectorizer = CountVectorizer(min_df=1,
-                             tokenizer=LemmaTokenizer(),
-                             preprocessor=preprocess_sentence,
-                             ngram_range=(1,2),
-                             stop_words='english')
+    # print("Best score: %0.3f" % grid_search.best_score_)
 
-pipeline = Pipeline([
-    ('vect', vectorizer),
-    ('clf', SGDClassifier()),
-])
+    X = vectorizer.fit_transform(sentences)
+    num_samples = len(Y)
+    num_train = int(num_samples * .8)
+    print "Num training: %d" % num_train
+    X_train = X[0:num_train]
+    Y_train = Y[0:num_train]
+    X_test  = X[num_train:]
+    Y_test = Y[num_train:]
+    analyze = vectorizer.build_analyzer()
 
+    for sentence in sentences[0:10]:
+        # print preprocess_sentence(sentence)
+        print analyze(sentence)
+        #      print LemmaTokenizer()(sentence)
+        #      print StemmingTokenizer()(sentence)
 
-# pprint(parameters)
-# t0 = time()
-# grid_search.fit(sentences, Y)
-# print("done in %0.3fs" % (time() - t0))
-# print()
+    # tokenized_sentences = [nltk.word_tokenize(sentence) for sentence in sentences]
+    # tagged_sentences = [nltk.pos_tag(sentence) for sentence in tokenized_sentences]
+    # chunked_sentences = nltk.ne_chunk_sents(tagged_sentences, binary=True)
 
-# print("Best score: %0.3f" % grid_search.best_score_)
+    logistic = linear_model.LogisticRegression(C=.5, class_weight=None, dual=False,
+                                               fit_intercept=True, intercept_scaling=1, max_iter=100,
+                                               multi_class='ovr', penalty='l2', random_state=None,
+                                               solver='liblinear', tol=0.0001, verbose=0)
 
-X = vectorizer.fit_transform(sentences)
-num_samples = len(Y)
-num_train = int(num_samples * .8)
-print "Num training: %d" % num_train
-X_train = X[0:num_train]
-Y_train = Y[0:num_train]
-X_test  = X[num_train:]
-Y_test = Y[num_train:]
-analyze = vectorizer.build_analyzer()
+    grid_search = GridSearchCV(SVC(), svm_param_grid, n_jobs=-1, verbose=1)
+    grid_search.fit(X_train, Y_train)
+    print grid_search.score(X_test, Y_test)
+    best_parameters = grid_search.best_estimator_.get_params()
+    print best_parameters
 
-for sentence in sentences[0:10]:
-    # print preprocess_sentence(sentence)
-    print analyze(sentence)
-#      print LemmaTokenizer()(sentence)
-#      print StemmingTokenizer()(sentence)
-    
-# tokenized_sentences = [nltk.word_tokenize(sentence) for sentence in sentences]
-# tagged_sentences = [nltk.pos_tag(sentence) for sentence in tokenized_sentences]
-# chunked_sentences = nltk.ne_chunk_sents(tagged_sentences, binary=True)
+    grid_search = GridSearchCV(logistic, param_grid, n_jobs=-1, verbose=1)
+    grid_search.fit(X_train, Y_train)
+    print grid_search.score(X_test, Y_test)
+    best_parameters = grid_search.best_estimator_.get_params()
+    print best_parameters
 
-logistic = linear_model.LogisticRegression(C=.5, class_weight=None, dual=False,
-                                     fit_intercept=True, intercept_scaling=1, max_iter=100,
-                                     multi_class='ovr', penalty='l2', random_state=None,
-                                     solver='liblinear', tol=0.0001, verbose=0)
+    print logistic.fit(X_train,Y_train).score(X_test,Y_test)
 
-grid_search = GridSearchCV(SVC(), svm_param_grid, n_jobs=-1, verbose=1)
-grid_search.fit(X_train, Y_train)
-print grid_search.score(X_test, Y_test)
-best_parameters = grid_search.best_estimator_.get_params()
-print best_parameters
-
-grid_search = GridSearchCV(logistic, param_grid, n_jobs=-1, verbose=1)
-grid_search.fit(X_train, Y_train)
-print grid_search.score(X_test, Y_test)
-best_parameters = grid_search.best_estimator_.get_params()
-print best_parameters
-
-print logistic.fit(X_train,Y_train).score(X_test,Y_test)
-
-show_most_informative_features(vectorizer, logistic, 10)
-
-
-
+    show_most_informative_features(vectorizer, logistic, 25)
+	
+if __name__ == "__main__":
+    main()
