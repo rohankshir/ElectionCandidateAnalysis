@@ -34,7 +34,8 @@ The [`get_data.sh`](get_data.sh) bash script takes these files and outputs an an
 ** removing repeated signs (--- becomes -)
 
 ### My Commentary on the results
-Lowercase
+#### Lowercase
+Hillary                     Trump
 ```
 -1.1429	american       		1.8230	it's
 -1.1382	work           		1.6675	-
@@ -62,7 +63,8 @@ Lowercase
 -0.4276	help           		0.5297	it's going
 -0.4203	worker         		0.5294	he's
 ```	
-Uppercase
+#### Uppercase
+Hillary                     Trump
 ```
 -1.0199	work           		1.4873	going
 -0.8936	need           		1.4056	-
@@ -78,7 +80,7 @@ Uppercase
 -0.5888	That’s         		0.7854	can't
 -0.5743	pay            		0.7852	It's
 -0.5689	job            		0.7796	it.
--0.5421	New            		0.7629	Igit remote add origin git@github.com:rohankshir/ElectionCandidateAnalysis.git
+-0.5421	New            		0.7629	I
 -0.5103	child          		0.7029	...
 -0.4857	it’s           		0.6664	people
 -0.4745	I’ll           		0.6440	right?
