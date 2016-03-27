@@ -35,6 +35,7 @@ The [`get_data.sh`](get_data.sh) bash script takes these files and outputs an an
 
 ### My Commentary on the results
 Lowercase
+```
 -1.1429	american       		1.8230	it's
 -1.1382	work           		1.6675	-
 -1.0505	it’s           		1.6211	we're
@@ -60,8 +61,9 @@ Lowercase
 -0.4317	tax            		0.5319	right?
 -0.4276	help           		0.5297	it's going
 -0.4203	worker         		0.5294	he's
-	
+```	
 Uppercase
+```
 -1.0199	work           		1.4873	going
 -0.8936	need           		1.4056	-
 -0.8508	Americans      		1.3148	it's
@@ -87,3 +89,4 @@ Uppercase
 -0.4585	make           		0.5866	that.
 -0.4578	strong         		0.5855	And
 -0.4544	u              		0.5469	I love
+```
