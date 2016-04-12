@@ -124,6 +124,7 @@ Hillary                     Trump
 ```
 
 #### POS Tags
+
 ```
 0.806748466258
 	-1.8281	NNS            		1.7925	VBP VBG
@@ -154,6 +155,7 @@ Hillary                     Trump
 	```
 	
 #### POS Tags bigrams
+
 ```
 0.812883435583
 	-1.4478	NN NN          		2.1424	PRP VBP
@@ -184,7 +186,7 @@ Hillary                     Trump
 	```
 	
 	#### Words and contractions
-	
+	```
 	0.886503067485
 	-1.4171	american       		2.4726	's
 	-1.3550	,              		1.9331	n't
@@ -211,3 +213,4 @@ Hillary                     Trump
 	-0.4546	community      		0.6219	said
 	-0.4415	support        		0.6210	incredible
 	-0.4334	ahead          		0.6137	amazing
+	```
