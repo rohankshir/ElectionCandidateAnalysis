@@ -124,6 +124,7 @@ Hillary                     Trump
 ```
 
 #### POS Tags
+```
 0.806748466258
 	-1.8281	NNS            		1.7925	VBP VBG
 	-1.5770	NN             		1.6088	PRP VBP
@@ -150,8 +151,10 @@ Hillary                     Trump
 	-0.6758	RB TO          		0.5658	VB :
 	-0.6737	RB IN          		0.5398	VBD DT
 	-0.6617	DT NN          		0.5338	VB .
+	```
 	
-#### POS Tags bigrams	
+#### POS Tags bigrams
+```
 0.812883435583
 	-1.4478	NN NN          		2.1424	PRP VBP
 	-1.4178	NN TO          		1.9040	VBP VBG
@@ -178,6 +181,7 @@ Hillary                     Trump
 	-0.7103	PRP$ JJ        		0.5556	VBG IN
 	-0.6986	IN JJ          		0.5551	RB :
 	-0.6876	VB IN          		0.5371	WP VBZ	
+	```
 	
 	#### Words and contractions
 	
