@@ -18,7 +18,34 @@ from sklearn.svm import SVC
 import sklearn.linear_model as linear_model
 from time import time
 import numpy as np
+import string
+from sklearn.metrics import confusion_matrix
 
+exclude = set(string.punctuation)
+
+def print_cm(cm, labels, hide_zeroes=False, hide_diagonal=False, hide_threshold=None):
+    """pretty print for confusion matrixes"""
+    columnwidth = max([len(x) for x in labels]+[5]) # 5 is value length
+    empty_cell = " " * columnwidth
+    # Print header
+    print "    " + empty_cell,
+    for label in labels: 
+        print "%{0}s".format(columnwidth) % label,
+    print
+    # Print rows
+    for i, label1 in enumerate(labels):
+        print "    %{0}s".format(columnwidth) % label1,
+        for j in range(len(labels)): 
+            cell = "%{0}.1f".format(columnwidth) % cm[i, j]
+            if hide_zeroes:
+                cell = cell if float(cm[i, j]) != 0 else empty_cell
+            if hide_diagonal:
+                cell = cell if i != j else empty_cell
+            if hide_threshold:
+                cell = cell if cm[i, j] > hide_threshold else empty_cell
+            print cell,
+        print
+        
 def clean_token(token):
     if "--" in token:
         return "-"
@@ -32,11 +59,22 @@ class LemmaTokenizer(object):
         ret = []
         for  t in doc.split():
             try:
-                ret.append(self.wnl.lemmatize(clean_token(t)))
+                ret.append(self.wnl.lemmatize(clean_token(t.decode())))
             except NameError as e:
                 pprint(e)
                 ret.append(t)
         return ret
+
+class POSTokenizer(object):
+    def __init__(self):
+        self.wnl = WordNetLemmatizer()
+        
+    def __call__(self, doc):
+        ret = []
+        for  word,tag in nltk.pos_tag(nltk.word_tokenize(doc)):
+                ret.append(tag)
+        return ret
+
 
 class StemmingTokenizer(object):
     def __init__(self):
@@ -46,7 +84,11 @@ class StemmingTokenizer(object):
         ret = []
         for  t in nltk.word_tokenize(doc):
             try:
-                ret.append(self.stem.stem(t.decode()))
+                word = self.stem.stem(clean_token(t.decode()))
+                has_punct = any(elem in exclude for elem in word)
+                if has_punct:
+                    continue
+                ret.append(word)
             except NameError as e:
                 pprint(e)
                 ret.append(t)
@@ -80,6 +122,14 @@ def remove_annotations(sentence):
 def preprocess_sentence(sentence):
     ret = remove_bracket(sentence)
     ret = remove_annotations(ret)
+    return ret.lower()
+
+def print_features(x, feature_index):
+    ret = ""
+    feats = x.T.toarray()
+    for i,hot in enumerate(feats):
+        if hot[0]:
+            ret += "[" + feature_index[i] + "]"
     return ret
 
 def main():
@@ -106,9 +156,9 @@ def main():
     Y =  map(lambda x: int(x.split('\t')[0]), lines)
 
     vectorizer = TfidfVectorizer(min_df=1,
-                                 tokenizer=LemmaTokenizer(),
+                                 tokenizer=POSTokenizer(),
                                  preprocessor=preprocess_sentence,
-                                 ngram_range=(1,2),
+                                 ngram_range=(2,2),
                                  stop_words='english')
 
     pipeline = Pipeline([
@@ -135,10 +185,10 @@ def main():
     analyze = vectorizer.build_analyzer()
 
     for sentence in sentences[0:10]:
-        # print preprocess_sentence(sentence)
+        print preprocess_sentence(sentence)
         print analyze(sentence)
-        #      print LemmaTokenizer()(sentence)
-        #      print StemmingTokenizer()(sentence)
+        print "LemmaTokenizer" +  str(LemmaTokenizer()(sentence))
+        print StemmingTokenizer()(sentence)
 
     # tokenized_sentences = [nltk.word_tokenize(sentence) for sentence in sentences]
     # tagged_sentences = [nltk.pos_tag(sentence) for sentence in tokenized_sentences]
@@ -149,21 +199,36 @@ def main():
                                                multi_class='ovr', penalty='l2', random_state=None,
                                                solver='liblinear', tol=0.0001, verbose=0)
 
-    grid_search = GridSearchCV(SVC(), svm_param_grid, n_jobs=-1, verbose=1)
-    grid_search.fit(X_train, Y_train)
-    print grid_search.score(X_test, Y_test)
-    best_parameters = grid_search.best_estimator_.get_params()
-    print best_parameters
+    # grid_search = GridSearchCV(SVC(), svm_param_grid, n_jobs=-1, verbose=1)
+    # grid_search.fit(X_train, Y_train)
+    # print grid_search.score(X_test, Y_test)
+    # best_parameters = grid_search.best_estimator_.get_params()
+    # print best_parameters
 
-    grid_search = GridSearchCV(logistic, param_grid, n_jobs=-1, verbose=1)
-    grid_search.fit(X_train, Y_train)
-    print grid_search.score(X_test, Y_test)
-    best_parameters = grid_search.best_estimator_.get_params()
-    print best_parameters
+    # grid_search = GridSearchCV(logistic, param_grid, n_jobs=-1, verbose=1)
+    # grid_search.fit(X_train, Y_train)
+    # print grid_search.score(X_test, Y_test)
+    # best_parameters = grid_search.best_estimator_.get_params()
+    # print best_parameters
 
     print logistic.fit(X_train,Y_train).score(X_test,Y_test)
 
     show_most_informative_features(vectorizer, logistic, 25)
-	
+
+    num_errors = 0
+
+    feature_names = vectorizer.vocabulary_
+    feature_index = inv_map = {v: k for k, v in feature_names.items()}
+    y_pred = []
+    for (i,x) in enumerate(X_test):
+        y_hat = logistic.predict(x)
+        y_pred.append(y_hat)
+        if y_hat != Y_test[i]:
+            num_errors += 1
+            print "\n\nError predicting sentence: " + sentences[i + num_train]
+            print print_features(x, feature_index)
+            print "Label: " + str(Y_test[i])
+    error_rate = float(num_errors) / len(Y_test)
+    print "Accuracy : " + str(1 - error_rate)
 if __name__ == "__main__":
     main()
