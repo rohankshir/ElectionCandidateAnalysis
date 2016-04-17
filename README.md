@@ -152,65 +152,66 @@ Hillary                     Trump
 	-0.6758	RB TO          		0.5658	VB :
 	-0.6737	RB IN          		0.5398	VBD DT
 	-0.6617	DT NN          		0.5338	VB .
-	```
+```
 	
 #### POS Tags bigrams
 
 ```
 0.812883435583
-	-1.4478	NN NN          		2.1424	PRP VBP
-	-1.4178	NN TO          		1.9040	VBP VBG
-	-1.2650	NNS IN         		1.8008	VBG TO
-	-1.2515	CC JJ          		1.4969	PRP VBZ
-	-1.2281	NN NNS         		1.3170	PRP VBD
-	-1.2238	NNS WP         		1.3144	VBZ VBG
-	-1.1461	TO VB          		1.2360	NN .
-	-1.1453	IN PRP$        		1.1813	RB VB
-	-1.0683	NNS CC         		1.1773	CC PRP
-	-1.0101	NN CC          		1.1333	MD RB
-	-0.9828	NNS ,          		1.0472	RB PRP
-	-0.9785	NN ,           		0.8130	RB JJ
-	-0.9675	IN NN          		0.8114	: PRP
-	-0.9639	JJ NNS         		0.8064	VBP RB
-	-0.8850	CC NN          		0.7879	VBZ RB
-	-0.7988	JJ NN          		0.7530	VBZ NN
-	-0.7574	PRP$ NN        		0.7049	: DT
-	-0.7470	WRB PRP        		0.7033	VBP DT
-	-0.7429	JJ DT          		0.6761	VB PRP
-	-0.7424	NNS DT         		0.6481	NN POS
-	-0.7328	JJ RB          		0.5966	CD IN
-	-0.7255	NNS VBP        		0.5581	VBN VBG
-	-0.7103	PRP$ JJ        		0.5556	VBG IN
-	-0.6986	IN JJ          		0.5551	RB :
-	-0.6876	VB IN          		0.5371	WP VBZ	
-	```
+-1.4478	NN NN          		2.1424	PRP VBP
+-1.4178	NN TO          		1.9040	VBP VBG
+-1.2650	NNS IN         		1.8008	VBG TO
+-1.2515	CC JJ          		1.4969	PRP VBZ
+-1.2281	NN NNS         		1.3170	PRP VBD
+-1.2238	NNS WP         		1.3144	VBZ VBG
+-1.1461	TO VB          		1.2360	NN .
+-1.1453	IN PRP$        		1.1813	RB VB
+-1.0683	NNS CC         		1.1773	CC PRP
+-1.0101	NN CC          		1.1333	MD RB
+-0.9828	NNS ,          		1.0472	RB PRP
+-0.9785	NN ,           		0.8130	RB JJ
+-0.9675	IN NN          		0.8114	: PRP
+-0.9639	JJ NNS         		0.8064	VBP RB
+-0.8850	CC NN          		0.7879	VBZ RB
+-0.7988	JJ NN          		0.7530	VBZ NN
+-0.7574	PRP$ NN        		0.7049	: DT
+-0.7470	WRB PRP        		0.7033	VBP DT
+-0.7429	JJ DT          		0.6761	VB PRP
+-0.7424	NNS DT         		0.6481	NN POS
+-0.7328	JJ RB          		0.5966	CD IN
+-0.7255	NNS VBP        		0.5581	VBN VBG
+-0.7103	PRP$ JJ        		0.5556	VBG IN
+-0.6986	IN JJ          		0.5551	RB :
+-0.6876	VB IN          		0.5371	WP VBZ	
+```
 	
-	#### Words and contractions
-	```
-	0.886503067485
-	-1.4171	american       		2.4726	's
-	-1.3550	,              		1.9331	n't
-	-1.0977	work           		1.8876	're
-	-1.0911	america        		1.4828	going
-	-0.9339	it’s           		1.2829	-
-	-0.9231	need           		1.1915	love
-	-0.9222	new            		1.1104	.
-	-0.9155	family         		0.9541	'm
-	-0.7457	that’s         		0.8929	people
-	-0.6570	growth         		0.8911	great
-	-0.5809	–              		0.8650	?
-	-0.5482	worker         		0.8409	everybody
-	-0.5438	i’ve           		0.8347	're going
-	-0.5328	job            		0.7767	...
-	-0.5323	economy        		0.7631	've
-	-0.5269	president      		0.7196	know .
-	-0.5243	i’m            		0.7148	wa
-	-0.5149	make           		0.7088	'll
-	-0.4804	america .      		0.7018	ca n't
-	-0.4766	i’ll           		0.7018	ca
-	-0.4672	child          		0.6492	's going
-	-0.4566	barrier        		0.6369	thing
-	-0.4546	community      		0.6219	said
-	-0.4415	support        		0.6210	incredible
-	-0.4334	ahead          		0.6137	amazing
-	```
+#### Words and contractions
+
+```
+0.886503067485
+-1.4171	american       		2.4726	's
+-1.3550	,              		1.9331	n't
+-1.0977	work           		1.8876	're
+-1.0911	america        		1.4828	going
+-0.9339	it’s           		1.2829	-
+-0.9231	need           		1.1915	love
+-0.9222	new            		1.1104	.
+-0.9155	family         		0.9541	'm
+-0.7457	that’s         		0.8929	people
+-0.6570	growth         		0.8911	great
+-0.5809	–              		0.8650	?
+-0.5482	worker         		0.8409	everybody
+-0.5438	i’ve           		0.8347	're going
+-0.5328	job            		0.7767	...
+-0.5323	economy        		0.7631	've
+-0.5269	president      		0.7196	know .
+-0.5243	i’m            		0.7148	wa
+-0.5149	make           		0.7088	'll
+-0.4804	america .      		0.7018	ca n't
+-0.4766	i’ll           		0.7018	ca
+-0.4672	child          		0.6492	's going
+-0.4566	barrier        		0.6369	thing
+-0.4546	community      		0.6219	said
+-0.4415	support        		0.6210	incredible
+-0.4334	ahead          		0.6137	amazing
+```
