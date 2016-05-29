@@ -33,7 +33,12 @@ The [`get_data.sh`](get_data.sh) bash script takes these files and outputs an an
 * cleaning up tokens 
 ** removing repeated signs (--- becomes -)
 
-### My Commentary on the results
+### Results
+
+Model: Logistic Regression
+
+Minimum F1 Score: 80 %
+
 #### Lowercase
 Hillary                     Trump
 ```
