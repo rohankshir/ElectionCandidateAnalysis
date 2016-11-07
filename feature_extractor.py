@@ -18,8 +18,11 @@ from sklearn.svm import SVC
 import sklearn.linear_model as linear_model
 from time import time
 import numpy as np
+np.random.seed(1337)  # for reproducibility
 import string
 from sklearn.metrics import confusion_matrix
+from scipy import sparse
+import dill as pickle
 
 exclude = set(string.punctuation)
 
@@ -124,20 +127,32 @@ def preprocess_sentence(sentence):
     ret = remove_annotations(ret)
     return ret.lower()
 
-def print_features(x, feature_index):
+def print_features(feats, feature_index):
+    feats = feats.flatten()
     ret = ""
-    feats = x.T.toarray()
     for i,hot in enumerate(feats):
-        if hot[0]:
+        if hot and i in feature_index:
             ret += "[" + feature_index[i] + "]"
+            
     return ret
+
+def get_arbitary_features(sentences):
+    features = np.zeros((len(sentences), 1))
+    for i,sentence in enumerate(sentences):
+        sentence = preprocess_sentence(sentence)
+        features[i,0] = len(sentence.split())
+
+    return features
+
+class ArbitraryFeaturesVectorizer:
+    def transform(self, sentences):
+        return get_arbitary_features(sentences)
 
 def main():
 
     reload(sys)
     sys.setdefaultencoding('utf-8')
 
-    pprint(LemmaTokenizer()("this is testing the stemming functionality"))
 
 
     param_grid = [
@@ -155,11 +170,18 @@ def main():
     sentences = map(lambda x: x.split('\t')[1], lines)
     Y =  map(lambda x: int(x.split('\t')[0]), lines)
 
-    vectorizer = TfidfVectorizer(min_df=1,
+    vectorizer = CountVectorizer(min_df=1,
+                                 tokenizer=StemmingTokenizer(),
+                                 preprocessor=preprocess_sentence,
+                                 ngram_range=(1,1),
+                                 stop_words='english')
+
+    pos_vectorizer = CountVectorizer(min_df=1,
                                  tokenizer=POSTokenizer(),
                                  preprocessor=preprocess_sentence,
-                                 ngram_range=(2,2),
+                                 ngram_range=(1,1),
                                  stop_words='english')
+
 
     pipeline = Pipeline([
         ('vect', vectorizer),
@@ -175,6 +197,17 @@ def main():
     # print("Best score: %0.3f" % grid_search.best_score_)
 
     X = vectorizer.fit_transform(sentences)
+    X = X.toarray()
+    X_pos = pos_vectorizer.fit_transform(sentences)
+    X_pos = X_pos.toarray()
+    X_other_features = get_arbitary_features(sentences)
+    print X_other_features
+    print X.shape
+    print X_pos.shape
+    print X_other_features.shape
+    X = np.hstack((X, X_pos, X_other_features))
+    print X.shape
+
     num_samples = len(Y)
     num_train = int(num_samples * .8)
     print "Num training: %d" % num_train
@@ -215,20 +248,28 @@ def main():
 
     show_most_informative_features(vectorizer, logistic, 25)
 
-    num_errors = 0
+    feature_vectorizers = [vectorizer, pos_vectorizer, ArbitraryFeaturesVectorizer()]
+    with open('feature_vectorizer.pkl','wb') as f:
+        pickle.dump(feature_vectorizers, f)
+    with open('classifier.pkl','wb') as f:
+        pickle.dump(logistic, f)
+        
 
-    feature_names = vectorizer.vocabulary_
-    feature_index = inv_map = {v: k for k, v in feature_names.items()}
-    y_pred = []
-    for (i,x) in enumerate(X_test):
-        y_hat = logistic.predict(x)
-        y_pred.append(y_hat)
-        if y_hat != Y_test[i]:
-            num_errors += 1
-            print "\n\nError predicting sentence: " + sentences[i + num_train]
-            print print_features(x, feature_index)
-            print "Label: " + str(Y_test[i])
-    error_rate = float(num_errors) / len(Y_test)
-    print "Accuracy : " + str(1 - error_rate)
+    # num_errors = 0
+
+    # feature_names = vectorizer.vocabulary_
+    # feature_index = {v: k for k, v in feature_names.items()}
+    
+    # y_pred = []
+    # for (i,x) in enumerate(X_test):
+    #     y_hat = logistic.predict(x)[0]
+    #     y_pred.append(y_hat)
+    #     if y_hat != Y_test[i]:
+    #         num_errors += 1
+    #         print "\n\nError predicting sentence: " + sentences[i + num_train]
+    #         print print_features(x, feature_index)
+    #         print "Label:{} Prediction: {}".format(Y_test[i], y_hat)
+    # error_rate = float(num_errors) / len(Y_test)
+    # print "Accuracy : " + str(1 - error_rate)
 if __name__ == "__main__":
     main()
