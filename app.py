@@ -1,10 +1,10 @@
 import os
 from flask import Flask,render_template, request,json
 from  predictor import Predictor
-from feature_extractor import *
+
 
 app = Flask(__name__)
-predictor = Predictor('classifier.pkl', 'feature_vectorizer.pkl')
+predictor = Predictor('classifier.pkl', 'lexical_vocab.pkl', 'pos_vocab.pkl')
 
 @app.route('/')
 def query():

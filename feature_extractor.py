@@ -24,6 +24,7 @@ from sklearn.metrics import confusion_matrix
 from scipy import sparse
 import dill as pickle
 
+
 exclude = set(string.punctuation)
 
 def print_cm(cm, labels, hide_zeroes=False, hide_diagonal=False, hide_threshold=None):
@@ -95,7 +96,23 @@ class StemmingTokenizer(object):
             except NameError as e:
                 pprint(e)
                 ret.append(t)
-        return ret    
+        return ret
+
+def get_lexical_vectorizer(vocab=None):
+    return CountVectorizer(min_df=1,
+                           tokenizer=StemmingTokenizer(),
+                           preprocessor=preprocess_sentence,
+                           ngram_range=(1,1),
+                           vocabulary=vocab,
+                           stop_words='english')
+
+def get_pos_vectorizer(vocab=None):
+    return CountVectorizer(min_df=1,
+                    tokenizer=POSTokenizer(),
+                    preprocessor=preprocess_sentence,
+                    ngram_range=(1,1),
+                    vocabulary=vocab,
+                    stop_words='english')
 
     
 def show_most_informative_features(vectorizer, clf, n=20):
@@ -169,17 +186,9 @@ def main():
     sentences = map(lambda x: x.split('\t')[1], lines)
     Y =  map(lambda x: int(x.split('\t')[0]), lines)
 
-    vectorizer = CountVectorizer(min_df=1,
-                                 tokenizer=StemmingTokenizer(),
-                                 preprocessor=preprocess_sentence,
-                                 ngram_range=(1,1),
-                                 stop_words='english')
+    vectorizer = get_lexical_vectorizer()
 
-    pos_vectorizer = CountVectorizer(min_df=1,
-                                 tokenizer=POSTokenizer(),
-                                 preprocessor=preprocess_sentence,
-                                 ngram_range=(1,1),
-                                 stop_words='english')
+    pos_vectorizer = get_pos_vectorizer()
 
 
     pipeline = Pipeline([
@@ -200,12 +209,7 @@ def main():
     X_pos = pos_vectorizer.fit_transform(sentences)
     X_pos = X_pos.toarray()
     X_other_features = get_arbitary_features(sentences)
-    print X_other_features
-    print X.shape
-    print X_pos.shape
-    print X_other_features.shape
     X = np.hstack((X, X_pos, X_other_features))
-    print X.shape
 
     num_samples = len(Y)
     num_train = int(num_samples * .8)
@@ -248,27 +252,32 @@ def main():
     show_most_informative_features(vectorizer, logistic, 25)
 
     feature_vectorizers = [vectorizer, pos_vectorizer, ArbitraryFeaturesVectorizer()]
-    with open('feature_vectorizer.pkl','wb') as f:
-        pickle.dump(feature_vectorizers, f)
+    with open('lexical_vocab.pkl','wb') as f:
+        pickle.dump(vectorizer.vocabulary_, f)
+
+    with open('pos_vocab.pkl','wb') as f:
+        pickle.dump(pos_vectorizer.vocabulary_, f)
+        
     with open('classifier.pkl','wb') as f:
         pickle.dump(logistic, f)
-        
 
-    # num_errors = 0
+    from predictor import Predictor
+    predictor = Predictor('classifier.pkl', 'lexical_vocab.pkl', 'pos_vocab.pkl')
+
+    num_errors = 0
 
     # feature_names = vectorizer.vocabulary_
     # feature_index = {v: k for k, v in feature_names.items()}
     
-    # y_pred = []
-    # for (i,x) in enumerate(X_test):
-    #     y_hat = logistic.predict(x)[0]
-    #     y_pred.append(y_hat)
-    #     if y_hat != Y_test[i]:
-    #         num_errors += 1
-    #         print "\n\nError predicting sentence: " + sentences[i + num_train]
-    #         print print_features(x, feature_index)
-    #         print "Label:{} Prediction: {}".format(Y_test[i], y_hat)
-    # error_rate = float(num_errors) / len(Y_test)
-    # print "Accuracy : " + str(1 - error_rate)
+    y_pred = []
+    for (i,x) in enumerate(X_test):
+        y_hat = predictor.predict_x(x)
+        if y_hat != Y_test[i]:
+            num_errors += 1
+            # print "\n\nError predicting sentence: " + sentences[i + num_train]
+            # print print_features(x, feature_index)
+            # print "Label:{} Prediction: {}".format(Y_test[i], y_hat)
+    error_rate = float(num_errors) / len(Y_test)
+    print "Accuracy : " + str(1 - error_rate)
 if __name__ == "__main__":
     main()
