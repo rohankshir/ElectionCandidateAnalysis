@@ -24,6 +24,7 @@ var opts = {
 var target = document.getElementById('chart_div')
 //google.charts.setOnLoadCallback(drawBasic);
 
+
 function drawBasic(probability, query) {
 
     console.log(probability)
@@ -66,6 +67,13 @@ function callPost()
 			response = jQuery.parseJSON(response)
 			console.log(response)
 			drawBasic(response['probabilities'], query)
+			var feats = response['relevant_words'];
+			$("ul").empty();
+			var cList = $('ul.list-group')
+			$.each(feats, function(i)
+			       {
+				   $('<li />', {class:"list-group-item", html: feats[i]}).appendTo(cList)
+			       });
 			},
 			error: function(error){
 				console.log(error);
@@ -90,3 +98,11 @@ $(function(){
 	    callPost();
 	});
 });
+
+$(function() {
+    $('#example_table tr').click( function(){
+	var text = $(this).find('td:first').html();
+	$('#txtQuery').val(text);
+	callPost()
+});
+});    

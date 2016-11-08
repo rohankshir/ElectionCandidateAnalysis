@@ -96,7 +96,7 @@ class StemmingTokenizer(object):
                 if has_punct:
                     continue
                 ret.append(word)
-            except NameError as e:
+            except (NameError, UnicodeEncodeError) as e:
                 pprint(e)
                 ret.append(t)
         return ret

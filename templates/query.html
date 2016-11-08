@@ -20,43 +20,96 @@
     <script src="static/js/jquery-1.9.0.js"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="static/js/spin.min.js"></script>
-   <script src="static/js/script.js"></script>
-   <script>$("input").keypress(function(event) {
-    console.log("Hello")
-    if (event.which == 13) {
-	console.log("Hello");	
-        event.preventDefault();
-        $("#target").submit();
-	callPost()
-    }
-});
-</script>
-   <style type="text/css">
-   body { background: white !important; } 
-</style>
+    <script src="static/js/script.js"></script>
+    <script>$("input").keypress(function(event) {
+      console.log("Hello")
+      if (event.which == 13) {
+      console.log("Hello");	
+      event.preventDefault();
+      $("#target").submit();
+      callPost()
+      }
+      });
+    </script>
 
-   
+    <style type="text/css">
+      body { background: white !important; } 
+    </style>
+
+    
   </head>
 
   <body>
 
     <div class="container">
+      <div class="row">
+	<div class="col-sm-8">
+	  
 
-      <form id = "target" class="form-signin"  role="form">
-        <h4 class="form-signin-heading">Hillary or Donald?</h2>
-        <textarea rows="3" id="txtQuery" name="query" class="form-control" placeholder="We’re going to be the smart people." required autofocus></textarea>
-        <br/>
-        <button class="btn btn-lg btn-primary btn-block" type="button">Analyze</button>
-      </form>
-      <div id="chart_div"></div>
- 	
+	  <form id = "target" class="form-signin"  role="form">
+            <h4 class="form-signin-heading">Hillary or Donald?</h4>
+            <textarea rows="3" id="txtQuery" name="query" class="form-control" placeholder="We’re going to be the smart people." required autofocus></textarea>
+	    
+            <button class="btn btn-lg btn-primary btn-block" type="button">Analyze</button>
+	  </form>
+	  <div id="chart_div"></div>
+	  <h4>Relevant features</h4>
 
+	  <ul class="list-group">
+	  </ul>
+        </div>
+	<div class="col-sm-4">
+	  <h4> <a href="https://medium.com/@rtotheohan/i-trained-a-machine-to-distinguish-between-trump-and-clinton-you-wont-believe-what-it-learned-25244222b26e#.cjfx2vn3t">I trained a machine to distinguish between Trump and Clinton. Here's what it learned.</a></h4>
+
+	  <h6>Test the model out on any of these examples, or type in your own.</h6>
+	  <br/>
+	  <table id="example_table" class="table">
+	    <tr>
+	      <th> Example Trump and Clinton Utterances<th>
+	    <tr>
+	      <td>I love you all.</td>
+	    </tr>
+	    <tr>
+	      <td>We're going to need smart people.</td>
+	    </tr>
+	    <tr>
+	      <td>I love the poorly educated.</td>
+	    </tr>
+	    <tr>
+	      <td>The middle class needs more growth and more fairness.</td>
+	    </tr>
+
+	    <tr>
+	      <td>We need more than a plan for the biggest banks.</td>
+	    </tr>
+	    <tr>
+	      <td>I believe it is or I wouldn’t be standing here.</td>
+	    </tr>
+	    <tr>
+	      <td>We need a president who knows that Americans deserve a raise to get to a living wage.</td>
+	    </tr>
+	    <tr>
+	      <td>We’re going to start winning.</td>
+	    </tr>
+	  </table>
+
+	</div>
+	
+      </div> <!-- /row -->
     </div> <!-- /container -->
- 
+    
 
     <!-- Bootstrap core JavaScript
-    ================================================== -->
+	 ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
+     <footer class="site-footer" id="footer">
+  <div class="container">
+    <p>By <a href="http://rohankshir.github.io">Rohan Kshirsagar</a>.</p>
+    <p>Contact information: <a href="mailto:rohan.kshirsagar@columbia.edu">
+	rohan.kshirsagar@columbia.edu</a>.</p>
+  </footer>
   </body>
+ 
+</div>
 </html>
 
