@@ -15,6 +15,9 @@ from sklearn.linear_model import SGDClassifier
 from sklearn.grid_search import GridSearchCV
 from sklearn.pipeline import Pipeline
 from sklearn.svm import SVC
+
+nltk.data.path.append('./nltk_data/')
+
 import sklearn.linear_model as linear_model
 from time import time
 import numpy as np
