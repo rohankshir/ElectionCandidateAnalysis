@@ -129,11 +129,10 @@ def preprocess_sentence(sentence):
 
 def print_features(feats, feature_index):
     feats = feats.flatten()
-    ret = ""
+    ret = []
     for i,hot in enumerate(feats):
         if hot and i in feature_index:
-            ret += "[" + feature_index[i] + "]"
-            
+            ret.append(feature_index[i])
     return ret
 
 def get_arbitary_features(sentences):
