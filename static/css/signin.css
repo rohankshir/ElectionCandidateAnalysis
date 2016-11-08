@@ -3,7 +3,9 @@ body {
   padding-bottom: 40px;
   background-color: #eee;
 }
-
+.hide-me {
+     display: none;
+}
 .form-signin {
   max-width: 330px;
   padding: 15px;

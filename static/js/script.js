@@ -69,6 +69,7 @@ function callPost()
 			drawBasic(response['probabilities'], query)
 			var feats = response['relevant_words'];
 			$("ul").empty();
+			$("h4:hidden").show();
 			var cList = $('ul.list-group')
 			$.each(feats, function(i)
 			       {
